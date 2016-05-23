@@ -1,4 +1,4 @@
-#Interop LCD display
+#Interop LCD display with HTTP and REST server
 ##Downloading and installing the libraries
 This project uses the [rpi-rgb-led-matrix](https://github.com/hzeller/rpi-rgb-led-matrix) library.
 

@@ -1,0 +1,8 @@
+# Byte-compiled
+*.pyc
+
+# databases
+*.db
+
+# compressed files
+*.tar

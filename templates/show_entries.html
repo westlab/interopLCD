@@ -1,39 +1,57 @@
 {% extends "layout.html" %}
 {% block body %}
-	{% if session.logged_in %}
-		<form action="{{url_for('add_entry')}}" method=post class=add-entry>
+	<div class="row marketing">
+		{% if session.logged_in %}
+		<div class="col-lg-6">
+		<form action="{{url_for('add_entry')}}" method=post>
 			<dl>
+				<p>
 				<dt>Text:
-				<dd><textarea name="text" cols="40" rows="5"></textarea>
+				<dd><textarea name="text" cols="40" rows="5" class="form-control"></textarea>
+				</p>
+				<p>
 				<dt>Text Color:
-				<dd><select name="color">
+				<dd><select name="color" class="selectpicker">
 					<option value="white" selected="">White</option>
 					<option value="black">Black</option>
 					<option value="red">Red</option>
 					<option value="green">Green</option>
 					<option value="blue">Blue</option>
 				</select>
+				</p>
+				<p>
 				<dt>Background Color:
-				<dd><select name="background">
+				<dd><select name="background" class="selectpicker">
 					<option value="white">White</option>
 					<option value="black" selected="">Black</option>
 					<option value="red">Red</option>
 					<option value="green">Green</option>
 					<option value="blue">Blue</option>
 				</select>
+				</p>
+				<p>
 				<dt>Draw Image:
-				<dd><select name="showImage">
+				<dd><select name="showImage" class="selectpicker">
 					<option value="miku" selected="">Miku</option>
+					<option value="no_image" selected="">No Image</option>
 				</select>
-				<dd><input type=submit value=Share>
+				</p>
+				<dd style="margin: 3em auto 0px; text-align: center;"><button type="submit" class="btn btn-primary btn-lg">Send</button>
 			</dl>
 		</form>
-	{% endif %}
-	<ul class=entries>
-		{% for entry in entries %}
-		<li>{{entry.text|safe}}
-		{% else %}
-		<li><em>Unbelievable. No entries here so far</em>
-		{% endfor %}
-	</ul>
+		</div>
+		{% endif %}
+		<div class="col-lg-6">
+			<div class="list-group" style="margin-top: 1em">
+			<h4 style="margin: 0px auto 1em; text-align: center">Previous Entries</h4>
+			<ul>
+				{% for entry in entries %}
+				<li class="list-group-item list">{{entry.text|safe}}
+				{% else %}
+				<li><em>Unbelievable. No entries here so far</em>
+				{% endfor %}
+			</ul>
+			</div>
+		</div>
+	</div>
 {% endblock %}

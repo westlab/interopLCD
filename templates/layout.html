@@ -1,17 +1,42 @@
 <!DOCTYPE html>
-<title>Flask</title>
-<link rel="stylesheet" type=text/css href="{{url_for('static',filename='style.css')}}">
-<div class=page>
-	<h1>Flask</h1>
-	<div class=metanav>
-		{% if not session.logged_in %}
-		<a href="{{url_for('login')}}">log in</a>
-		{% else %}
-		<a href="{{url_for('logout')}}">log out</a>
-		{% endif %}
+<html lang="en">
+<head>
+	<meta charset='uft-8'>
+	<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+	<meta name='viewport' content='width=device-width, initial-scale=1'>
+	<title>Interop LCD</title>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/css/bootstrap-select.min.css">
+	<link rel="stylesheet" type=text/css href="{{url_for('static',filename='style.css')}}">
+</head>
+<body>
+	<div class=container>
+	<div class="header clearfix">
+		<p class="pull-right">
+			{% if not session.logged_in %}
+			<a class="btn btn-lg btn-success" role="button" href="{{url_for('login')}}">log in</a>
+			{% else %}
+			<a class="btn btn-lg btn-danger" role="button" href="{{url_for('logout')}}">log out</a>
+			{% endif %}
+		</p>
+		<h3 class="text-muted">Interop LCD</h3>
+	</div>
+	<div class="jumbotron">
+		<h1>Interop LCD</h1>
+		<p class="lead">
+			Play with LCD!
+		</p>
 	</div>
 	{% for message in get_flashed_messages() %}
-	<div class=flash>{{message}}</div>
+	<div class="alert alert-success">{{message}}</div>
 	{% endfor %}
 	{% block body %}{% endblock%}
-</div>
+	</div>
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/js/bootstrap-select.min.js"></script>
+</body>
+</html>

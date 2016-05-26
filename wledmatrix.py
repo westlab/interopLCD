@@ -274,28 +274,28 @@ class WGFX(argparse.ArgumentParser):
             j += 1
 
     def drawImage(self, x, y, image, w, h):
-        im=Image.open(image)
-        imdata=list(im.getdata())
+        im = Image.open(image)
+        imdata = list(im.getdata())
         #print("length of imdata is: "+str(len(imdata)))
-        j=0
-        c=0
-        while j<h:
-            i=0
-            while i<w:
-                self.matrix.SetPixel(x+i,y+j,imdata[c][0],imdata[c][1],imdata[c][2])
+        j = 0
+        c = 0
+        while j < h:
+            i = 0
+            while i < w:
+                self.matrix.SetPixel(x+i, y+j, imdata[c][0], imdata[c][1], imdata[c][2])
                 #print(type(imdata[c][0]))
-                i+=1
-                c+=1
-            j+=1
+                i += 1
+                c += 1
+            j += 1
 
     def fillBackground (self, canvas, w, h, color):
-        i=0
-        while i<w:
+        i = 0
+        while i < w:
             graphics.DrawLine(canvas, i, 0, i, h, color)
             i += 1
 
     def drawText(self, canvas, pos, jafont, enfont, color, text):
-        leng=0
+        leng = 0
 #        jafont=graphics.Font()
 #        enfont=graphics.Font()
 #        try:
@@ -308,11 +308,11 @@ class WGFX(argparse.ArgumentParser):
                 char.decode('ascii')
             except UnicodeDecodeError:
                 print char
-                leng+=graphics.DrawText(canvas,jafont,pos,14,color,str(char))
-                pos+=18
+                leng += graphics.DrawText(canvas,jafont,pos,14,color,str(char))
+                pos += 18
             else:
                 print char
-                leng+=graphics.DrawText(canvas,enfont,pos,12,color,str(char))
-                pos+=9
+                leng += graphics.DrawText(canvas,enfont,pos,12,color,str(char))
+                pos += 9
         return leng
 

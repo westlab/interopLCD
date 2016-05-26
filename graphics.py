@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 from samplebase import SampleBase
 from rgbmatrix import graphics
-import time;
+import time
+
 
 class GraphicsTest(SampleBase):
     def __init__(self, *args, **kwargs):
         super(GraphicsTest, self).__init__(*args, **kwargs)
 
     def Run(self):
-        canvas = self.matrix;
+        canvas = self.matrix
         font = graphics.Font()
         font.LoadFont("/usr/local/share/fonts/7x13.bdf")
 

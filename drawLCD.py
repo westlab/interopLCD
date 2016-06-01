@@ -13,12 +13,25 @@ import threading
 import time
 
 
-myData = {
+myData = [{
     'background': "black", 
-    'text': u"みっくみっくにしてあげる♪-by Hatsune Miku", 
+    'text': u"NOC 乙です！", 
     'color': "white", 
     'showImage': "miku"
+},
+{
+    'background': "black", 
+    'text': u"慶應義塾大学西研究室", 
+    'color': "blue", 
+    'showImage': ""
+},
+{
+    'background': "black",
+    'text': u"Service oriented Router", 
+    'color': "red", 
+    'showImage': ""
 }
+]
 
 myColor = {
     'black': graphics.Color(0, 0, 0), 
@@ -47,6 +60,8 @@ class Draw(WGFX):
 
         count = 0
 
+        dnum = 0
+
         try: 
             jafont.LoadFont("/usr/local/share/fonts/18x18ja.bdf")
             # enfont.LoadFont("/usr/local/share/fonts/9x18.bdf")
@@ -59,15 +74,15 @@ class Draw(WGFX):
             # TODO: Create mode(?) (e.g. mode1:  text flow,  mode2:  advertise westlab...?)
 
             # 1.draw background
-            if myData["background"] != "": 
-               self.fillBackground(canvas, width, height, myColor[myData["background"]])
+            if myData[dnum]["background"] != "": 
+               self.fillBackground(canvas, width, height, myColor[myData[dnum]["background"]])
 
             # 2.draw and change color of text(create function)
-            leng1 = graphics.DrawText(canvas, jafont, pos, 14, myColor[myData["color"]], myData["text"].encode("utf-8"))
+            leng1 = graphics.DrawText(canvas, jafont, pos, 14, myColor[myData[dnum]["color"]], myData[dnum]["text"].encode("utf-8"))
             # leng2 = graphics.DrawText(canvas, enfont, pos+leng1, 12, graphics.Color(0, 255, 0), myEnText)
 
             # 3.draw miku(create function)
-            if myData["showImage"] == "miku": 
+            if myData[dnum]["showImage"] == "miku": 
                 # currentSecond=datetime.now().second
                 # if(currentSecond%2 == 0): 
                 if(count%2 == 0): 
@@ -75,17 +90,23 @@ class Draw(WGFX):
                 # elif(currentSecond%2==1): 
                 elif(count%2 == 1): 
                     self.drawImage(48, 0, 'hatsune-miku2-2.ppm', 16, 16)
+                if count > 1:
+                    count = 0
                 
             # move text
             # TODO: Changable text flow rate
             # if(count%10 == 0): 
-            pos -= 1
+            pos -= 2
             #    count = 0
+
+            if(pos + leng1 < 0):
+                dnum += 1
+            if(dnum > 2):
+                dnum = 0
 
             if(pos + leng1 < 0): 
                 pos = width
 
-            # Change this to time based sleep
             time.sleep(0.10)
 
             canvas = self.matrix.SwapOnVSync(canvas)

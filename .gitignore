@@ -3,6 +3,7 @@
 
 # databases
 *.db
+*.db-journal
 
 # compressed files
 *.tar

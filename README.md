@@ -28,4 +28,4 @@ Please change the argument `host='10.24.128.182'` in the `app.run()`function in 
 ##Accessing the REST server
 The `interopLCD.py` script also uses Flask to create a REST server.
 
-Test the REST server by typing `curl -i -H "Content-Type: application/json" -X POST -d '{"background":"black","text":"Hello World!","color":"white"}' http://<Raspberry Pi IP address>:5000/rest/api/data`.
+Test the REST server by typing `curl -i -H "Content-Type: application/json" -X POST -d '{"background":"black","text":"Hello World!","color":"white"}' http://<Raspberry Pi IP address>:5000/api/lcd`.

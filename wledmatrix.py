@@ -288,6 +288,12 @@ class WGFX(argparse.ArgumentParser):
                 c+=1
             j+=1
 
+    def fillBackground (self, canvas, w, h, color):
+        i=0
+        while i<w:
+            graphics.DrawLine(canvas, i, 0, i, h, color)
+            i += 1
+
     def drawText(self, canvas, pos, jafont, enfont, color, text):
         leng=0
 #        jafont=graphics.Font()

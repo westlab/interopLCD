@@ -119,7 +119,7 @@ def recieve_data():
         'background': request.json['background'], 
         'text': request.json['text'], 
         'color': request.json['color'], 
-        'showImage': False
+        'showImage': request.json['image']
     }
     return jsonify({'data':  myData}), 201
 
@@ -131,5 +131,6 @@ if __name__ == "__main__":
     ledmatrix.start()
 # create & start server thread
     # need `use_reloader=False` to deactive reloader and run the program
-    t = threading.Thread(target = app.run(debug = True, host = '10.24.128.182', use_reloader = False))
+    # t = threading.Thread(target = app.run(debug = True, host = '10.24.128.182', use_reloader = False))
+    t = threading.Thread(target = app.run(debug = True, host = '192.168.1.2', use_reloader = False))
     t.start()

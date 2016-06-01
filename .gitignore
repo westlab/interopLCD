@@ -6,3 +6,6 @@
 
 # compressed files
 *.tar
+
+# swap files
+*.swp

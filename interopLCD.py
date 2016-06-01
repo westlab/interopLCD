@@ -21,14 +21,14 @@ from contextlib import closing
 
 
 # Thread for ledmatrix
-class LEDMatrix(threading.Thread): 
-    def run(self): 
+class LEDMatrix(threading.Thread):
+    def run(self):
 
         # create Draw instance
         parser = drawLCD.Draw()
-        if(not parser.process()): 
+        if(not parser.process()):
             parser.print_help()
-            
+
 
 # Flaskr
 # configuration
@@ -42,31 +42,31 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 
 
-def connect_db(): 
+def connect_db():
     return sqlite3.connect(app.config['DATABASE'])
 
 
-def init_db(): 
-    with closing(connect_db()) as db: 
-        with app.open_resource('schema.sql',  mode = 'r') as f: 
+def init_db():
+    with closing(connect_db()) as db:
+        with app.open_resource('schema.sql',  mode = 'r') as f:
             db.cursor().executescript(f.read())
             db.commit()
 
 
 @app.before_request
-def before_request(): 
+def before_request():
     g.db = connect_db()
 
 
 @app.teardown_request
-def teardown_request(exception): 
+def teardown_request(exception):
     db = getattr(g, 'db', None)
-    if db is not None: 
+    if db is not None:
         db.close()
 
 
 @app.route('/')
-def show_entries(): 
+def show_entries():
     cur = g.db.execute('select text from entries order by id desc')
     entries = [dict(text = row[1]) for row in cur.fetchall()]
     for data in drawLCD.myData:
@@ -75,29 +75,29 @@ def show_entries():
 
 
 @app.route('/add', methods = ['POST'])
-def add_entry(): 
-    if not session.get('logged_in'): 
+def add_entry():
+    if not session.get('logged_in'):
         abort(401)
     g.db.execute('insert into entries (background, text, color, showImage) values (?, ?, ?, ?)', [request.form['background'], request.form['text'], request.form['color'], request.form['showImage']])
     # Insert sent data to myData
     cur = g.db.execute('select background, text, color, showImage from entries order by id desc')
     row = cur.fetchone()
     drawLCD.myData = [{
-        'background': row[0]["background"], 
-        'text': row[0]["text"], 
-        'color': row[0]["color"], 
+        'background': row[0]["background"],
+        'text': row[0]["text"],
+        'color': row[0]["color"],
         'showImage': row[0]["showImage"]
     },
     {
-        'background': row[1]["background"], 
-        'text': row[1]["text"], 
-        'color': row[1]["color"], 
+        'background': row[1]["background"],
+        'text': row[1]["text"],
+        'color': row[1]["color"],
         'showImage': row[1]["showImage"]
     },
     {
-        'background': row[2]["background"], 
-        'text': row[2]["text"], 
-        'color': row[2]["color"], 
+        'background': row[2]["background"],
+        'text': row[2]["text"],
+        'color': row[2]["color"],
         'showImage': row[2]["showImage"]
     }
     ]
@@ -107,14 +107,14 @@ def add_entry():
 
 
 @app.route('/login', methods = ['GET', 'POST'])
-def login(): 
+def login():
     error = None
-    if request.method == 'POST': 
-        if request.form['username'] != app.config['USERNAME']: 
+    if request.method == 'POST':
+        if request.form['username'] != app.config['USERNAME']:
             error = 'Invalid username'
-        elif request.form['password'] != app.config['PASSWORD']: 
+        elif request.form['password'] != app.config['PASSWORD']:
             error = 'Invalid password'
-        else: 
+        else:
             session['logged_in'] = True
             flash('You were logged in')
             return redirect(url_for('show_entries'))
@@ -122,51 +122,37 @@ def login():
 
 
 @app.route('/logout')
-def logout(): 
+def logout():
     session.pop('logged_in', None)
     flash('You were logged out')
     return redirect(url_for('show_entries'))
 
 
 @app.route('/api/lcd', methods = ['POST'])
-def recieve_data(): 
+def recieve_data():
     # TODO: make this program usable
-    if not request.json or not 'text' in request.json: 
+    if not request.json or not 'text' in request.json:
         abort(400)
     g.db.execute('insert into entries (background, text, color, showImage) values (?, ?, ?, ?)', [request.json['background'], request.json['text'], request.json['color'], request.json['showImage']])
     # Insert sent data to myData
     cur = g.db.execute('select background, text, color, showImage from entries order by id desc')
     i = 0
-    row = []
+    drawLCD.myData = {}
     while i < 3:
-        row[i] = cur.fetchone()
+        row = cur.fetchone()
+	drawLCD.myData.update({
+		'background': row[0],
+		'text': row[0],
+		'color': row[0],
+		'showImage': row[0]
+	})
         i = i + 1
-
-    drawLCD.myData = [{
-        'background': row[0][0], 
-        'text': row[0][1], 
-        'color': row[0][2], 
-        'showImage': row[0][3]
-    },
-    {
-        'background': row[1][0], 
-        'text': row[1][1], 
-        'color': row[1][2], 
-        'showImage': row[1][3]
-    },
-    {
-        'background': row[2][0], 
-        'text': row[2][1], 
-        'color': row[2][2], 
-        'showImage': row[2][3]
-    }
-    ]
     g.db.commit()
     return jsonify({'data':  drawLCD.myData}), 201
 
 
 # main function
-if __name__ == "__main__": 
+if __name__ == "__main__":
 # create & start ledmatrix thread
     ledmatrix = LEDMatrix()
     ledmatrix.start()

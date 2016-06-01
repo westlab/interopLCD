@@ -130,6 +130,7 @@ def logout():
 
 @app.route('/api/lcd', methods = ['POST'])
 def recieve_data(): 
+    # TODO: make this program usable
     if not request.json or not 'text' in request.json: 
         abort(400)
     g.db.execute('insert into entries (background, text, color, showImage) values (?, ?, ?, ?)', [request.json['background'], request.json['text'], request.json['color'], request.json['showImage']])

@@ -68,7 +68,9 @@ def teardown_request(exception):
 @app.route('/')
 def show_entries(): 
     cur = g.db.execute('select text from entries order by id desc')
-    entries = [dict(text = row[0]) for row in cur.fetchall()]
+    entries = [dict(text = row[1]) for row in cur.fetchall()]
+    for data in drawLCD.myData:
+        g.db.execute('insert into entries (background, text, color, showImage) values (?, ?, ?, ?)', [data['background'], data['text'], data['color'], data['showImage']])
     return render_template('show_entries.html',  entries = entries)
 
 
@@ -76,14 +78,29 @@ def show_entries():
 def add_entry(): 
     if not session.get('logged_in'): 
         abort(401)
-    g.db.execute('insert into entries (text) values (?)', [request.form['text']])
+    g.db.execute('insert into entries (background, text, color, showImage) values (?, ?, ?, ?)', [request.form['background'], request.form['text'], request.form['color'], request.form['showImage']])
     # Insert sent data to myData
-    drawLCD.myData = {
-        'background': request.form['background'], 
-        'text': request.form['text'], 
-        'color': request.form['color'], 
-        'showImage': request.form['showImage']
+    cur = g.db.execute('select background, text, color, showImage from entries order by id desc')
+    row = cur.fetchone()
+    drawLCD.myData = [{
+        'background': row[0]["background"], 
+        'text': row[0]["text"], 
+        'color': row[0]["color"], 
+        'showImage': row[0]["showImage"]
+    },
+    {
+        'background': row[1]["background"], 
+        'text': row[1]["text"], 
+        'color': row[1]["color"], 
+        'showImage': row[1]["showImage"]
+    },
+    {
+        'background': row[2]["background"], 
+        'text': row[2]["text"], 
+        'color': row[2]["color"], 
+        'showImage': row[2]["showImage"]
     }
+    ]
     g.db.commit()
     flash('New entry was successfully posted')
     return redirect(url_for('show_entries'))
@@ -115,13 +132,36 @@ def logout():
 def recieve_data(): 
     if not request.json or not 'text' in request.json: 
         abort(400)
-    drawLCD.myData = {
-        'background': request.json['background'], 
-        'text': request.json['text'], 
-        'color': request.json['color'], 
-        'showImage': request.json['image']
+    g.db.execute('insert into entries (background, text, color, showImage) values (?, ?, ?, ?)', [request.json['background'], request.json['text'], request.json['color'], request.json['showImage']])
+    # Insert sent data to myData
+    cur = g.db.execute('select background, text, color, showImage from entries order by id desc')
+    i = 0
+    row = []
+    while i < 3:
+        row[i] = cur.fetchone()
+        i = i + 1
+
+    drawLCD.myData = [{
+        'background': row[0][0], 
+        'text': row[0][1], 
+        'color': row[0][2], 
+        'showImage': row[0][3]
+    },
+    {
+        'background': row[1][0], 
+        'text': row[1][1], 
+        'color': row[1][2], 
+        'showImage': row[1][3]
+    },
+    {
+        'background': row[2][0], 
+        'text': row[2][1], 
+        'color': row[2][2], 
+        'showImage': row[2][3]
     }
-    return jsonify({'data':  myData}), 201
+    ]
+    g.db.commit()
+    return jsonify({'data':  drawLCD.myData}), 201
 
 
 # main function

@@ -27,7 +27,7 @@ myData = [{
 },
 {
     'background': "black",
-    'text': u"Service oriented Router", 
+    'text': u"Service-oriented Router", 
     'color': "red", 
     'showImage': ""
 }

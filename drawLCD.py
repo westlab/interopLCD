@@ -15,7 +15,7 @@ import time
 
 myData = [{
     'background': "black",
-    'text': u"NOC 乙です！",
+    'text': u"Interop 2016",
     'color': "white",
     'showImage': "miku"
 },

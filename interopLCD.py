@@ -41,6 +41,8 @@ PASSWORD = 'default'
 app = Flask(__name__)
 app.config.from_object(__name__)
 
+insertdb = False
+
 
 def connect_db():
     return sqlite3.connect(app.config['DATABASE'])
@@ -69,8 +71,6 @@ def teardown_request(exception):
 def show_entries():
     cur = g.db.execute('select text from entries order by id desc')
     entries = [dict(text = row[1]) for row in cur.fetchall()]
-    for data in drawLCD.myData:
-        g.db.execute('insert into entries (background, text, color, showImage) values (?, ?, ?, ?)', [data['background'], data['text'], data['color'], data['showImage']])
     return render_template('show_entries.html',  entries = entries)
 
 
@@ -78,29 +78,22 @@ def show_entries():
 def add_entry():
     if not session.get('logged_in'):
         abort(401)
+    for data in drawLCD.myData:
+        g.db.execute('insert into entries (background, text, color, showImage) values (?, ?, ?, ?)', [data['background'], data['text'], data['color'], data['showImage']])
     g.db.execute('insert into entries (background, text, color, showImage) values (?, ?, ?, ?)', [request.form['background'], request.form['text'], request.form['color'], request.form['showImage']])
     # Insert sent data to myData
-    cur = g.db.execute('select background, text, color, showImage from entries order by id desc')
-    row = cur.fetchone()
-    drawLCD.myData = [{
-        'background': row[0]["background"],
-        'text': row[0]["text"],
-        'color': row[0]["color"],
-        'showImage': row[0]["showImage"]
-    },
-    {
-        'background': row[1]["background"],
-        'text': row[1]["text"],
-        'color': row[1]["color"],
-        'showImage': row[1]["showImage"]
-    },
-    {
-        'background': row[2]["background"],
-        'text': row[2]["text"],
-        'color': row[2]["color"],
-        'showImage': row[2]["showImage"]
-    }
-    ]
+    i = 0
+    drawLCD.myData = [{},{},{}]
+    while i < 3:
+        row = cur.fetchone()
+        if row != None:
+            drawLCD.myData[i].update({
+                    'background': str(row[0]),
+                    'text': u''.join(row[1]).strip(),
+                    'color': str(row[2]),
+                    'showImage': str(row[3])
+            })
+        i = i + 1
     g.db.commit()
     flash('New entry was successfully posted')
     return redirect(url_for('show_entries'))
@@ -130,24 +123,31 @@ def logout():
 
 @app.route('/api/lcd', methods = ['POST'])
 def recieve_data():
-    # TODO: make this program usable
+    global insertdb
     if not request.json or not 'text' in request.json:
         abort(400)
+    # insert myData to db
+    cur = g.db.execute('select background, text, color, showImage from entries order by id desc')
+    if insertdb == False:
+        for data in drawLCD.myData:
+            g.db.execute('insert into entries (background, text, color, showImage) values (?, ?, ?, ?)', [data['background'], data['text'], data['color'], data['showImage']])
+    # insert newly added data to db
     g.db.execute('insert into entries (background, text, color, showImage) values (?, ?, ?, ?)', [request.json['background'], request.json['text'], request.json['color'], request.json['showImage']])
     # Insert sent data to myData
-    cur = g.db.execute('select background, text, color, showImage from entries order by id desc')
     i = 0
-    drawLCD.myData = {}
+    drawLCD.myData = [{},{},{}]
     while i < 3:
         row = cur.fetchone()
-	drawLCD.myData.update({
-		'background': row[0],
-		'text': row[0],
-		'color': row[0],
-		'showImage': row[0]
-	})
+        if row != None:
+            drawLCD.myData[i].update({
+                    'background': str(row[0]),
+                    'text': u''.join(row[1]).strip(),
+                    'color': str(row[2]),
+                    'showImage': str(row[3])
+            })
         i = i + 1
     g.db.commit()
+    insertdb = True
     return jsonify({'data':  drawLCD.myData}), 201
 
 

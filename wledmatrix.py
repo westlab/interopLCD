@@ -287,6 +287,7 @@ class WGFX(argparse.ArgumentParser):
                 i+=1
                 c+=1
             j+=1
+	return im.size[0]
 
     def fillBackground (self, canvas, w, h, color):
         i=0

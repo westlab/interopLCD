@@ -78,16 +78,16 @@ def show_entries():
 def add_entry():
     if not session.get('logged_in'):
         abort(401)
-    for data in drawLCD.myData:
+    for data in drawLCD.myWordData:
         g.db.execute('insert into entries (background, text, color, showImage) values (?, ?, ?, ?)', [data['background'], data['text'], data['color'], data['showImage']])
     g.db.execute('insert into entries (background, text, color, showImage) values (?, ?, ?, ?)', [request.form['background'], request.form['text'], request.form['color'], request.form['showImage']])
-    # Insert sent data to myData
+    # Insert sent data to myWordData
     i = 0
-    drawLCD.myData = [{},{},{}]
+    drawLCD.myWordData = [{},{},{}]
     while i < 3:
         row = cur.fetchone()
         if row != None:
-            drawLCD.myData[i].update({
+            drawLCD.myWordData[i].update({
                     'background': str(row[0]),
                     'text': u''.join(row[1]).strip(),
                     'color': str(row[2]),
@@ -124,22 +124,27 @@ def logout():
 @app.route('/api/lcd', methods = ['POST'])
 def recieve_data():
     global insertdb
-    if not request.json or not 'text' in request.json:
+    #if not request.json:
+    if not request.json:
         abort(400)
-    # insert myData to db
-    cur = g.db.execute('select background, text, color, showImage from entries order by id desc')
+    # insert myWordData to db
+    cur = g.db.execute('select background, text, color, showImage from entries order by id asc')
     if insertdb == False:
-        for data in drawLCD.myData:
+        for data in drawLCD.myWordData:
             g.db.execute('insert into entries (background, text, color, showImage) values (?, ?, ?, ?)', [data['background'], data['text'], data['color'], data['showImage']])
     # insert newly added data to db
-    g.db.execute('insert into entries (background, text, color, showImage) values (?, ?, ?, ?)', [request.json['background'], request.json['text'], request.json['color'], request.json['showImage']])
-    # Insert sent data to myData
+    for data in request.json:
+        print data
+        g.db.execute('insert into entries (background, text, color, showImage) values (?, ?, ?, ?)', [data.get('background',''), data.get('text',''), data.get('color',''), data.get('showImage','')])
+    # insert sent data to myWordData
     i = 0
-    drawLCD.myData = [{},{},{}]
-    while i < 3:
+    drawLCD.dnum_max = 3
+    drawLCD.myWordData = [{},{},{}]
+    cur = g.db.execute('select background, text, color, showImage from entries order by id desc')
+    while i < drawLCD.dnum_max:
         row = cur.fetchone()
         if row != None:
-            drawLCD.myData[i].update({
+            drawLCD.myWordData[i].update({
                     'background': str(row[0]),
                     'text': u''.join(row[1]).strip(),
                     'color': str(row[2]),
@@ -148,7 +153,66 @@ def recieve_data():
         i = i + 1
     g.db.commit()
     insertdb = True
-    return jsonify({'data':  drawLCD.myData}), 201
+    print drawLCD.myWordData
+    return jsonify({'data':  drawLCD.myWordData}), 201
+
+
+@app.route('/api/door', methods = ['POST'])
+def recieve_data():
+    global insertdb
+    #if not request.json:
+    if not request.json:
+        abort(400)
+    # insert myDoorData to db
+    cur = g.db.execute('select background, text, color, showImage from entries order by id asc')
+    if insertdb == False:
+        for data in drawLCD.myDoorData:
+            g.db.execute('insert into entries (background, text, color, showImage) values (?, ?, ?, ?)', [data['background'], data['text'], data['color'], data['showImage']])
+    # insert newly added data to db
+    for data in request.json:
+        print data
+        g.db.execute('insert into entries (background, text, color, showImage) values (?, ?, ?, ?)', [data.get('background',''), data.get('text',''), data.get('color',''), data.get('showImage','')])
+    # insert sent data to myDoorData
+    i = 0
+    drawLCD.dnum_max = 4
+    drawLCD.myDoorData = [{},{},{},{}]
+    cur = g.db.execute('select background, text, color, showImage from entries order by id desc')
+    while i < drawLCD.dnum_max:
+        row = cur.fetchone()
+        if row != None:
+			if i == 0:
+				drawLCD.myDoorData[i].update({
+					'background': 'white',
+					'text': u'Packets Received: ' + str(row[1]),
+					'color': 'black',
+					'showImage': ''
+				})
+			if i == 1:
+				drawLCD.myDoorData[i].update({
+					'background': 'white',
+					'text': u'Packets Processed: ' + str(row[1]),
+					'color': 'black',
+					'showImage': ''
+				})
+			if i == 2:
+				drawLCD.myDoorData[i].update({
+					'background': 'white',
+					'text': u'TCP Streams Reconstructed: ' + str(row[1]),
+					'color': 'black',
+					'showImage': ''
+				})
+			if i == 3:
+				drawLCD.myDoorData[i].update({
+					'background': 'white',
+					'text': u'String Matches: ' + str(row[1]),
+					'color': 'black',
+					'showImage': ''
+				})
+        i = i + 1
+    g.db.commit()
+    insertdb = True
+    print drawLCD.myDoorData
+    return jsonify({'data':  drawLCD.myDoorData}), 201
 
 
 # main function

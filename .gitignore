@@ -10,6 +10,7 @@
 
 # swap files
 *.swp
+*.swo
 
 # hardcopys
 hardcopy*

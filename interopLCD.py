@@ -122,26 +122,26 @@ def logout():
 
 
 @app.route('/api/lcd', methods = ['POST'])
-def recieve_data():
+def recieve_word_data():
     global insertdb
     #if not request.json:
     if not request.json:
         abort(400)
     # insert myWordData to db
-    cur = g.db.execute('select background, text, color, showImage from entries order by id asc')
+    cur = g.db.execute('select background, text, color, showImage from word_data order by id asc')
     if insertdb == False:
         for data in drawLCD.myWordData:
-            g.db.execute('insert into entries (background, text, color, showImage) values (?, ?, ?, ?)', [data['background'], data['text'], data['color'], data['showImage']])
+            g.db.execute('insert into word_data (background, text, color, showImage) values (?, ?, ?, ?)', [data['background'], data['text'], data['color'], data['showImage']])
+        insertdb = True
     # insert newly added data to db
     for data in request.json:
         print data
-        g.db.execute('insert into entries (background, text, color, showImage) values (?, ?, ?, ?)', [data.get('background',''), data.get('text',''), data.get('color',''), data.get('showImage','')])
+        g.db.execute('insert into word_data (background, text, color, showImage) values (?, ?, ?, ?)', [data.get('background',''), data.get('text',''), data.get('color',''), data.get('showImage','')])
     # insert sent data to myWordData
     i = 0
-    drawLCD.dnum_max = 3
     drawLCD.myWordData = [{},{},{}]
-    cur = g.db.execute('select background, text, color, showImage from entries order by id desc')
-    while i < drawLCD.dnum_max:
+    cur = g.db.execute('select background, text, color, showImage from word_data order by id desc')
+    while i < 3:
         row = cur.fetchone()
         if row != None:
             drawLCD.myWordData[i].update({
@@ -152,62 +152,38 @@ def recieve_data():
             })
         i = i + 1
     g.db.commit()
-    insertdb = True
     print drawLCD.myWordData
     return jsonify({'data':  drawLCD.myWordData}), 201
 
 
 @app.route('/api/door', methods = ['POST'])
-def recieve_data():
+def recieve_door_data():
     global insertdb
     #if not request.json:
     if not request.json:
         abort(400)
     # insert myDoorData to db
-    cur = g.db.execute('select background, text, color, showImage from entries order by id asc')
+    cur = g.db.execute('select background, text, color, showImage from door_data order by id asc')
     if insertdb == False:
         for data in drawLCD.myDoorData:
-            g.db.execute('insert into entries (background, text, color, showImage) values (?, ?, ?, ?)', [data['background'], data['text'], data['color'], data['showImage']])
+            g.db.execute('insert into door_data (background, text, color, showImage) values (?, ?, ?, ?)', [data['background'], data['text'], data['color'], data['showImage']])
     # insert newly added data to db
     for data in request.json:
         print data
-        g.db.execute('insert into entries (background, text, color, showImage) values (?, ?, ?, ?)', [data.get('background',''), data.get('text',''), data.get('color',''), data.get('showImage','')])
+        g.db.execute('insert into door_data (background, text, color, showImage) values (?, ?, ?, ?)', [data.get('background',''), data.get('text',''), data.get('color',''), data.get('showImage','')])
     # insert sent data to myDoorData
     i = 0
-    drawLCD.dnum_max = 4
     drawLCD.myDoorData = [{},{},{},{}]
-    cur = g.db.execute('select background, text, color, showImage from entries order by id desc')
-    while i < drawLCD.dnum_max:
+    cur = g.db.execute('select background, text, color, showImage from door_data order by id desc')
+    while i < 4:
         row = cur.fetchone()
         if row != None:
-			if i == 0:
-				drawLCD.myDoorData[i].update({
-					'background': 'white',
-					'text': u'Packets Received: ' + str(row[1]),
-					'color': 'black',
-					'showImage': ''
-				})
-			if i == 1:
-				drawLCD.myDoorData[i].update({
-					'background': 'white',
-					'text': u'Packets Processed: ' + str(row[1]),
-					'color': 'black',
-					'showImage': ''
-				})
-			if i == 2:
-				drawLCD.myDoorData[i].update({
-					'background': 'white',
-					'text': u'TCP Streams Reconstructed: ' + str(row[1]),
-					'color': 'black',
-					'showImage': ''
-				})
-			if i == 3:
-				drawLCD.myDoorData[i].update({
-					'background': 'white',
-					'text': u'String Matches: ' + str(row[1]),
-					'color': 'black',
-					'showImage': ''
-				})
+            drawLCD.myDoorData[i].update({
+                    'background': str(row[0]),
+                    'text': u''.join(row[1]).strip(),
+                    'color': str(row[2]),
+                    'showImage': str(row[3])
+            })
         i = i + 1
     g.db.commit()
     insertdb = True
@@ -222,6 +198,6 @@ if __name__ == "__main__":
     ledmatrix.start()
 # create & start server thread
     # need `use_reloader=False` to deactive reloader and run the program
-    # t = threading.Thread(target = app.run(debug = True, host = '10.24.128.182', use_reloader = False))
-    t = threading.Thread(target = app.run(debug = True, host = '192.168.1.2', use_reloader = False))
+    t = threading.Thread(target = app.run(debug = True, host = 'localhost', use_reloader = False))
+    # t = threading.Thread(target = app.run(debug = True, host = '192.168.1.2', use_reloader = False))
     t.start()

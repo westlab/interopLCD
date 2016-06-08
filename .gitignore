@@ -7,6 +7,7 @@
 
 # compressed files
 *.tar
+*.tar.gz
 
 # swap files
 *.swp
@@ -14,3 +15,6 @@
 
 # hardcopys
 hardcopy*
+
+# text files
+*.txt

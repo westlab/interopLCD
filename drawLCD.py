@@ -13,7 +13,7 @@ import threading
 import time
 
 
-myDefaultData = [{
+myDoorData = [{
     'background': "black",
     'text': u"Interop 2016",
     'color': "white",
@@ -21,28 +21,28 @@ myDefaultData = [{
 },
 {
     'background': "black",
-    'text': u"慶應義塾大学西研究室",
-    'color': "green",
-    'showImage': ""
-},
-{
-    'background': "black",
     'text': u"Service-oriented Router",
-    'color': "red",
-    'showImage': ""
+    'color': "blue",
+    'showImage': "miku"
 },
 {
     'background': "black",
-    'text': u"Keio Univ. WestLab",
-    'color': "blue",
-    'showImage': ""
+    'text': u"Keio Univ.",
+    'color': "red",
+    'showImage': "miku"
+},
+{
+    'background': "black",
+    'text': u"WESTLAB",
+    'color': "green",
+    'showImage': "miku"
 }]
 
 myWordData = [{
     'background': "black",
     'text': u"Interop 2016",
     'color': "white",
-    'showImage': "miku"
+    'showImage': ""
 },
 {
     'background': "black",
@@ -56,9 +56,6 @@ myWordData = [{
     'color': "red",
     'showImage': ""
 }]
-
-myDoorData = [{},{},{},{}]
-
 
 myColor = {
     'black': graphics.Color(0, 0, 0),
@@ -67,109 +64,6 @@ myColor = {
     'green': graphics.Color(0, 255, 0),
     'blue': graphics.Color(0, 0, 255)
 }
-
-dnum_max = 3
-
-
-def drawWestLabData(self, canvas, width, height, enfont, pos):
-	self.fillBackground(canvas, width, height, graphics.Color(0,0,0))
-
-	# 1. draw keio pen
-	lengKoPen = self.drawImage(pos, 0, 'keiopen.ppm', 16, 16)
-
-	# 2.draw and change color of text
-	leng = graphics.DrawText(canvas, enfont, pos + lengKoPen, 14, graphics.Color(255,255,255), 'Keio Univ.'.encode("utf-8"))
-
-	# 3. draw westlab mark
-	lengWestlab = self.drawImage(pos + leng + lengKoPen, 0, 'westlab.ppm', 104, 16)
-
-	# 4. draw sor westlab
-	lengSorWest = self.drawImage(pos + leng + lengKoPen + lengWestlab, 0, 'sorwestlab.ppm', 350, 16)
-
-	# move text
-	pos -= 2
-
-	if(pos + leng + lengKoPen + lengWestlab + lengSorWest < 0):
-		pos = width
-
-
-def drawWordData(self, canvas, width, height, jafont, pos, dnum):
-    count = 0
-
-	# 1.draw background
-    if myWordData[dnum]["background"] != "":
-		self.fillBackground(canvas, width, height, myColor[myWordData[dnum]["background"]])
-
-	# 2.draw and change color of text
-    leng = graphics.DrawText(canvas, jafont, pos, 14, myColor[myWordData[dnum]["color"]], myWordData[dnum]["text"].encode("utf-8"))
-
-	# 3.draw miku
-    if myWordData[dnum]["showImage"] == "miku":
-		if(count % 2 == 0):
-			self.drawImage(48, 0, 'hatsune-miku2.ppm', 16, 16)
-		elif(count % 2 == 1):
-			self.drawImage(48, 0, 'hatsune-miku2-2.ppm', 16, 16)
-		if count > 1:
-			count = 0
-
-	# move text
-    pos -= 2
-
-	# if completly scrolled text move to next text
-    if(pos + leng < 0):
-		dnum += 1
-    if(dnum > dnum_max):
-		dnum = 0
-
-    if(pos + leng < 0):
-		pos = width
-
-    count += 1
-
-
-def drawDoorData(self, canvas, width, height, enfont, pos, dnum):
-    count = 0
-
-	# 1.draw background
-    if myDoorData[dnum]["background"] != "":
-		self.fillBackground(canvas, width, height, myColor[myDoorData[dnum]["background"]])
-
-	# 2.draw and change color of text
-    leng = graphics.DrawText(canvas, enfont, pos, 14, myColor[myDoorData[dnum]["color"]], myDoorData[dnum]["text"].encode("utf-8"))
-
-	# 3.draw miku
-    if myDoorData[dnum]["showImage"] == "miku":
-		if(count % 2 == 0):
-			self.drawImage(48, 0, 'hatsune-miku2.ppm', 16, 16)
-		elif(count % 2 == 1):
-			self.drawImage(48, 0, 'hatsune-miku2-2.ppm', 16, 16)
-		if count > 1:
-			count = 0
-
-	# move text
-    pos -= 2
-
-	# if completly scrolled text move to next text
-    if(pos + leng < 0):
-		dnum += 1
-    if(dnum > dnum_max):
-		dnum = 0
-
-    if(pos + leng < 0):
-		pos = width
-
-    count += 1
-
-
-def changeMode(preSec):
-	currentSec = datetime.now().minute * 60 + datetime.now().second
-	difSec = currentSec - preSec
-	if difSec % (60 * 20) == 0:
-		return 2
-	elif difSec % (60 * 5) == 0:
-		return 1
-	elif difSec % 20 == 0:
-		return 0
 
 
 class Draw(WGFX):
@@ -188,12 +82,14 @@ class Draw(WGFX):
 
         pos = width
 
-		# an indication for data number
-        dnum = 0
+        count = 0
 
-		# get initiate second
-        preSec = datetime.now().minute * 60 + datetime.now().second
-        mode = 2
+        # an indication for data number
+        dnum = 0
+        dnum_max = 2
+
+        # Set mode
+        mode = 0
 
         try:
             jafont.LoadFont("/usr/local/share/fonts/18x18ja.bdf")
@@ -206,14 +102,100 @@ class Draw(WGFX):
 
             # TODO: Create mode(?) (e.g. mode1:  text flow,  mode2:  advertise westlab...?)
 
-            if mode != changeMode(preSec) and changeMode(preSec) != None:
-                mode = changeMode(preSec)
+            # MODE1: ADVERTISE WESTLAB
             if mode == 0:
-			    drawDoorData(canvas, width, height, enfont, pos, dnum)
+                self.fillBackground(canvas, width, height, graphics.Color(255,255,255))
+
+                # 1. draw keio pen
+                lengKoPen = self.drawImage(pos, 0, 'keiopen.ppm', 16, 16)
+
+                # 2.draw and change color of text
+                leng = graphics.DrawText(canvas, enfont, pos + lengKoPen, 14, graphics.Color(0,0,0), 'Keio Univ.'.encode("utf-8"))
+
+                # 3. draw westlab mark
+                lengWestlab = self.drawImage(pos + leng + lengKoPen, 0, 'westlab.ppm', 104, 16)
+
+                # 4. draw sor westlab
+                lengSorWest = self.drawImage(pos + leng + lengKoPen + lengWestlab, 0, 'sorwestlab.ppm', 350, 16)
+
+                # move text
+                pos -= 3
+
+                if(pos + leng + lengKoPen + lengWestlab + lengSorWest < 0):
+                    pos = width
+                    mode = 1
+                    dnum = 0
+                    dnum_max = 2
+
+            # MODE2: DRAW WORD DATA
             elif mode == 1:
-				drawWordData(canvas, width, height, jafont, pos, dnum)
+
+                # 1.draw background
+                if myWordData[dnum]["background"] != "":
+                    self.fillBackground(canvas, width, height, myColor[myWordData[dnum]["background"]])
+
+                # 2.draw and change color of text
+                leng = graphics.DrawText(canvas, jafont, pos, 14, myColor[myWordData[dnum]["color"]], myWordData[dnum]["text"].encode("utf-8"))
+
+                # 3.draw miku
+                if myWordData[dnum]["showImage"] == "miku":
+                    if(count % 2 == 0):
+                        self.drawImage(48, 0, 'hatsune-miku2.ppm', 16, 16)
+                    elif(count % 2 == 1):
+                        self.drawImage(48, 0, 'hatsune-miku2-2.ppm', 16, 16)
+                    if count > 1:
+                        count = 0
+
+                # move text
+                pos -= 3
+
+                # if completly scrolled text move to next text
+                if(pos + leng < 0):
+                    dnum += 1
+                if(dnum > dnum_max):
+                    mode = 2
+                    dnum = 0
+                    dnum_max = 3
+
+                if(pos + leng < 0):
+                    pos = width
+
+                count += 1
+
+            # MODE3: DRAW DOOR DATA
             elif mode == 2:
-				drawWestLabData(canvas, width, height, enfont, pos)
+
+                # 1.draw background
+                if myDoorData[dnum]["background"] != "":
+                    self.fillBackground(canvas, width, height, myColor[myDoorData[dnum]["background"]])
+
+                # 2.draw and change color of text
+                leng = graphics.DrawText(canvas, enfont, pos, 14, myColor[myDoorData[dnum]["color"]], myDoorData[dnum]["text"].encode("utf-8"))
+
+                # 3.draw miku
+                if myDoorData[dnum]["showImage"] == "miku":
+                    if(count % 2 == 0):
+                        self.drawImage(48, 0, 'hatsune-miku2.ppm', 16, 16)
+                    elif(count % 2 == 1):
+                        self.drawImage(48, 0, 'hatsune-miku2-2.ppm', 16, 16)
+                    if count > 1:
+                        count = 0
+
+                # move text
+                pos -= 3
+
+                # if completly scrolled text move to next text
+                if(pos + leng < 0):
+                    dnum += 1
+                if(dnum > dnum_max):
+                    mode = 0
+                    dnum = 0
+                    dnum_max = 2
+
+                if(pos + leng < 0):
+                    pos = width
+
+                count += 1
 
             time.sleep(0.10)
 

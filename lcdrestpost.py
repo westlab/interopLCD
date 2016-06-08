@@ -11,7 +11,7 @@ except_data=[{
 {
     'background': "black",
     'text': "慶應義塾大学西研究室",
-    'color': "blue",
+    'color': "green",
     'showImage': ""
 },
 {
@@ -25,7 +25,7 @@ except_data=[{
 while True:
     opened_url = True
     try:
-        url = "http://localhost:80/api/v1/word_rank"
+        url = "http://10.24.128.249:5000/api/v1/word_rank"
         openurl = urllib2.urlopen(url)
 
         raw_data = openurl.read()
@@ -98,5 +98,6 @@ while True:
     print send_data
 
 #    r = requests.post('http://192.168.1.2:5000/api/lcd',json = send_data)
+    r = requests.post('http://localhost:5000/api/lcd',json = send_data)
 
-    time.sleep(18000)
+    time.sleep(60 * 5)

@@ -93,7 +93,7 @@ class Draw(WGFX):
 
         try:
             jafont.LoadFont("/usr/local/share/fonts/18x18ja.bdf")
-            enfont.LoadFont("/usr/local/share/fonts/9x18.bdf")
+            enfont.LoadFont("/usr/local/share/fonts/9x15B.bdf")
         except:
             print "No Fonts!"
 
@@ -104,25 +104,30 @@ class Draw(WGFX):
 
             # MODE1: ADVERTISE WESTLAB
             if mode == 0:
-                self.fillBackground(canvas, width, height, graphics.Color(255,255,255))
 
                 # 1. draw keio pen
-                lengKoPen = self.drawImage(pos, 0, 'keiopen.ppm', 16, 16)
+                if dnum == 0:
+                    self.fillBackground(canvas, width, height, graphics.Color(255,255,255))
+                    leng1 = self.drawImage(pos, 0, 'keiopen.ppm', 16, 16)
+                    leng = graphics.DrawText(canvas, enfont, pos + leng1, 14, graphics.Color(0,0,0), 'Keio Univ.'.encode("utf-8"))
 
-                # 2.draw and change color of text
-                leng = graphics.DrawText(canvas, enfont, pos + lengKoPen, 14, graphics.Color(0,0,0), 'Keio Univ.'.encode("utf-8"))
+                # 2. draw westlab mark
+                elif dnum == 1:
+                    self.fillBackground(canvas, width, height, graphics.Color(255,255,255))
+                    leng = self.drawImage(pos, 0, 'westlab.ppm', 104, 16)
 
-                # 3. draw westlab mark
-                lengWestlab = self.drawImage(pos + leng + lengKoPen, 0, 'westlab.ppm', 104, 16)
-
-                # 4. draw sor westlab
-                lengSorWest = self.drawImage(pos + leng + lengKoPen + lengWestlab, 0, 'sorwestlab.ppm', 350, 16)
+                # 3. draw sor westlab
+                elif dnum == 2:
+                    self.fillBackground(canvas, width, height, graphics.Color(0,0,0))
+                    leng = self.drawImage(pos, 0, 'sorwestlab.ppm', 350, 16)
 
                 # move text
                 pos -= 3
 
-                if(pos + leng + lengKoPen + lengWestlab + lengSorWest < 0):
+                if(pos + leng < 0):
                     pos = width
+                    dnum += 1
+                if(dnum > dnum_max):
                     mode = 1
                     dnum = 0
                     dnum_max = 2
@@ -152,13 +157,11 @@ class Draw(WGFX):
                 # if completly scrolled text move to next text
                 if(pos + leng < 0):
                     dnum += 1
+                    pos = width
                 if(dnum > dnum_max):
                     mode = 2
                     dnum = 0
                     dnum_max = 3
-
-                if(pos + leng < 0):
-                    pos = width
 
                 count += 1
 
@@ -187,13 +190,11 @@ class Draw(WGFX):
                 # if completly scrolled text move to next text
                 if(pos + leng < 0):
                     dnum += 1
+                    pos = width
                 if(dnum > dnum_max):
                     mode = 0
                     dnum = 0
                     dnum_max = 2
-
-                if(pos + leng < 0):
-                    pos = width
 
                 count += 1
 

@@ -135,7 +135,7 @@ def recieve_word_data():
         insertdb = True
     # insert newly added data to db
     for data in request.json:
-        print data
+        # print data
         g.db.execute('insert into word_data (background, text, color, showImage) values (?, ?, ?, ?)', [data.get('background',''), data.get('text',''), data.get('color',''), data.get('showImage','')])
     # insert sent data to myWordData
     i = 0
@@ -152,7 +152,7 @@ def recieve_word_data():
             })
         i = i + 1
     g.db.commit()
-    print drawLCD.myWordData
+    # print drawLCD.myWordData
     return jsonify({'data':  drawLCD.myWordData}), 201
 
 
@@ -169,7 +169,7 @@ def recieve_door_data():
             g.db.execute('insert into door_data (background, text, color, showImage) values (?, ?, ?, ?)', [data['background'], data['text'], data['color'], data['showImage']])
     # insert newly added data to db
     for data in request.json:
-        print data
+        # print data
         g.db.execute('insert into door_data (background, text, color, showImage) values (?, ?, ?, ?)', [data.get('background',''), data.get('text',''), data.get('color',''), data.get('showImage','')])
     # insert sent data to myDoorData
     i = 0
@@ -187,7 +187,7 @@ def recieve_door_data():
         i = i + 1
     g.db.commit()
     insertdb = True
-    print drawLCD.myDoorData
+    # print drawLCD.myDoorData
     return jsonify({'data':  drawLCD.myDoorData}), 201
 
 
@@ -198,6 +198,6 @@ if __name__ == "__main__":
     ledmatrix.start()
 # create & start server thread
     # need `use_reloader=False` to deactive reloader and run the program
-    t = threading.Thread(target = app.run(debug = True, host = 'localhost', use_reloader = False))
-    # t = threading.Thread(target = app.run(debug = True, host = '192.168.1.2', use_reloader = False))
+    # t = threading.Thread(target = app.run(debug = True, host = 'localhost', use_reloader = False))
+    t = threading.Thread(target = app.run(debug = True, host = '192.168.1.2', use_reloader = False))
     t.start()

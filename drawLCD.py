@@ -126,11 +126,12 @@ class Draw(WGFX):
 
                 if(pos + leng < 0):
                     pos = width
+                    print 'dnum: ',dnum,' max: ',dnum_max
                     dnum += 1
                 if(dnum > dnum_max):
-                    mode = 1
+                    mode = 2
                     dnum = 0
-                    dnum_max = 2
+                    dnum_max = 3
 
             # MODE2: DRAW WORD DATA
             elif mode == 1:
@@ -156,6 +157,7 @@ class Draw(WGFX):
 
                 # if completly scrolled text move to next text
                 if(pos + leng < 0):
+                    print 'dnum: ',dnum,' max: ',dnum_max
                     dnum += 1
                     pos = width
                 if(dnum > dnum_max):
@@ -189,6 +191,7 @@ class Draw(WGFX):
 
                 # if completly scrolled text move to next text
                 if(pos + leng < 0):
+                    print 'dnum: ',dnum,' max: ',dnum_max
                     dnum += 1
                     pos = width
                 if(dnum > dnum_max):

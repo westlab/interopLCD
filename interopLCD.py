@@ -3,6 +3,8 @@
 # LCD Control with Flaskr & Rest Server #
 #########################################
 
+# Technomall: run with doorpost.py
+
 # LCD control
 from wledmatrix import WGFX
 from rgbmatrix import graphics
@@ -83,7 +85,26 @@ def add_entry():
     g.db.execute('insert into entries (background, text, color, showImage) values (?, ?, ?, ?)', [request.form['background'], request.form['text'], request.form['color'], request.form['showImage']])
     # Insert sent data to myWordData
     i = 0
-    drawLCD.myWordData = [{},{},{}]
+    #drawLCD.myWordData = [{},{},{}]
+    drawLCD.myWordData = [{
+        'background': "",
+        'text': u"",
+        'color': "",
+        'showImage': ""
+    },
+    {
+        'background': "",
+        'text': u"",
+        'color': "",
+        'showImage': ""
+    },
+    {
+        'background': "",
+        'text': u"",
+        'color': "",
+        'showImage': ""
+    }]
+    cur = g.db.execute('select background, text, color, showImage from word_data order by id desc')
     while i < 3:
         row = cur.fetchone()
         if row != None:
@@ -139,7 +160,25 @@ def recieve_word_data():
         g.db.execute('insert into word_data (background, text, color, showImage) values (?, ?, ?, ?)', [data.get('background',''), data.get('text',''), data.get('color',''), data.get('showImage','')])
     # insert sent data to myWordData
     i = 0
-    drawLCD.myWordData = [{},{},{}]
+    #drawLCD.myWordData = [{},{},{}]
+    drawLCD.myWordData = [{
+        'background': "",
+        'text': u"",
+        'color': "",
+        'showImage': ""
+    },
+    {
+        'background': "",
+        'text': u"",
+        'color': "",
+        'showImage': ""
+    },
+    {
+        'background': "",
+        'text': u"",
+        'color': "",
+        'showImage': ""
+    }]
     cur = g.db.execute('select background, text, color, showImage from word_data order by id desc')
     while i < 3:
         row = cur.fetchone()
@@ -173,7 +212,31 @@ def recieve_door_data():
         g.db.execute('insert into door_data (background, text, color, showImage) values (?, ?, ?, ?)', [data.get('background',''), data.get('text',''), data.get('color',''), data.get('showImage','')])
     # insert sent data to myDoorData
     i = 0
-    drawLCD.myDoorData = [{},{},{},{}]
+    #drawLCD.myDoorData = [{},{},{},{}]
+    drawLCD.myDoorData = [{
+        'background': "",
+        'text': u"",
+        'color': "",
+        'showImage': ""
+    },
+    {
+        'background': "",
+        'text': u"",
+        'color': "",
+        'showImage': ""
+    },
+    {
+        'background': "",
+        'text': u"",
+        'color': "",
+        'showImage': ""
+    },
+    {
+        'background': "",
+        'text': u"",
+        'color': "",
+        'showImage': ""
+    }]
     cur = g.db.execute('select background, text, color, showImage from door_data order by id desc')
     while i < 4:
         row = cur.fetchone()
@@ -198,6 +261,7 @@ if __name__ == "__main__":
     ledmatrix.start()
 # create & start server thread
     # need `use_reloader=False` to deactive reloader and run the program
-    # t = threading.Thread(target = app.run(debug = True, host = 'localhost', use_reloader = False))
-    t = threading.Thread(target = app.run(debug = True, host = '192.168.1.2', use_reloader = False))
+    t = threading.Thread(target = app.run(debug = True, host = 'localhost', use_reloader = False))
+    # t = threading.Thread(target = app.run(debug = True, host = '172.16.12.52', use_reloader = False))
+    # t = threading.Thread(target = app.run(debug = True, host = '10.24.128.249', use_reloader = False))
     t.start()

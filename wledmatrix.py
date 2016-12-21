@@ -274,6 +274,7 @@ class WGFX(argparse.ArgumentParser):
             j += 1
 
     def drawImage(self, x, y, image, w, h):
+        #TODO: Draw the part of the image displayed
         im=Image.open(image)
         imdata=list(im.getdata())
         #print("length of imdata is: "+str(len(imdata)))

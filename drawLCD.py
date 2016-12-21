@@ -137,7 +137,39 @@ class Draw(WGFX):
             elif mode == 1:
 
                 # 1.draw background
-                if myWordData[dnum]["background"] != "":
+                global myWordData
+                global myColor
+                try:
+                    if myWordData[dnum]["background"] != "":
+                        self.fillBackground(canvas, width, height, myColor[myWordData[dnum]["background"]])
+                except KeyError:
+                    myWordData = [{
+                        'background': "black",
+                        'text': u"Interop 2016",
+                        'color': "white",
+                        'showImage': ""
+                    },
+                    {
+                        'background': "black",
+                        'text': u"慶應義塾大学西研究室",
+                        'color': "green",
+                        'showImage': ""
+                    },
+                    {
+                        'background': "black",
+                        'text': u"Service-oriented Router",
+                        'color': "red",
+                        'showImage': ""
+                    }]
+                    myColor = {
+                        'black': graphics.Color(0, 0, 0),
+                        'white': graphics.Color(255, 255, 255),
+                        'red': graphics.Color(255, 0, 0),
+                        'green': graphics.Color(0, 255, 0),
+                        'blue': graphics.Color(0, 0, 255)
+                    }
+                    print("KeyError for myWordData!")
+                    print(myWordData)
                     self.fillBackground(canvas, width, height, myColor[myWordData[dnum]["background"]])
 
                 # 2.draw and change color of text
@@ -170,12 +202,51 @@ class Draw(WGFX):
             # MODE3: DRAW DOOR DATA
             elif mode == 2:
 
-                # 1.draw background
-                if myDoorData[dnum]["background"] != "":
-                    self.fillBackground(canvas, width, height, myColor[myDoorData[dnum]["background"]])
+                global myDoorData
+                global myColor
+                try:
+                    # 1.draw background
+                    if myDoorData[dnum]["background"] != "":
+                        self.fillBackground(canvas, width, height, myColor[myDoorData[dnum]["background"]])
 
-                # 2.draw and change color of text
-                leng = graphics.DrawText(canvas, enfont, pos, 14, myColor[myDoorData[dnum]["color"]], myDoorData[dnum]["text"].encode("utf-8"))
+                    # 2.draw and change color of text
+                    leng = graphics.DrawText(canvas, enfont, pos, 14, myColor[myDoorData[dnum]["color"]], myDoorData[dnum]["text"].encode("utf-8"))
+                except KeyError:
+                    myDoorData = [{
+                        'background': "black",
+                        'text': u"Interop 2016",
+                        'color': "white",
+                        'showImage': "miku"
+                    },
+                    {
+                        'background': "black",
+                        'text': u"Service-oriented Router",
+                        'color': "blue",
+                        'showImage': "miku"
+                    },
+                    {
+                        'background': "black",
+                        'text': u"Keio Univ.",
+                        'color': "red",
+                        'showImage': "miku"
+                    },
+                    {
+                        'background': "black",
+                        'text': u"WESTLAB",
+                        'color': "green",
+                        'showImage': "miku"
+                    }]
+                    myColor = {
+                        'black': graphics.Color(0, 0, 0),
+                        'white': graphics.Color(255, 255, 255),
+                        'red': graphics.Color(255, 0, 0),
+                        'green': graphics.Color(0, 255, 0),
+                        'blue': graphics.Color(0, 0, 255)
+                    }
+                    print("KeyError for myDoorData!")
+                    print(myDoorData)
+                    self.fillBackground(canvas, width, height, myColor[myDoorData[dnum]["background"]])
+                    leng = graphics.DrawText(canvas, enfont, pos, 14, myColor[myDoorData[dnum]["color"]], myDoorData[dnum]["text"].encode("utf-8"))
 
                 # 3.draw miku
                 if myDoorData[dnum]["showImage"] == "miku":

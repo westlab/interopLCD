@@ -73,7 +73,7 @@ while True:
 
     print send_data
 
-#    r = requests.post('http://192.168.1.2:5000/api/lcd',json = send_data)
+#    r = requests.post('http://172.16.12.52:5000/api/lcd',json = send_data)
     r = requests.post('http://localhost:5000/api/door',json = send_data)
 
-    time.sleep(20)
+    time.sleep(2)

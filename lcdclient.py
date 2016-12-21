@@ -6,7 +6,7 @@ from itertools import islice
 import requests
 
 
-door_endpoint = 'http://localhost:5000/api/v1/word_rank'
+#door_endpoint = 'http://localhost:5000/api/v1/word_rank'
 lcd_endpoint = 'http://192.168.1.2:5000/api/lcd'
 
 default_data = [{
